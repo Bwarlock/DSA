@@ -1,7 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-// Edge case {9,3,2,1} gives -1
 int pivotRotatedArray(vector<int> a)
 {
     int low = 0;
@@ -34,7 +33,7 @@ int pivotRotatedArray(vector<int> a)
 
 int main()
 {
-    vector<int> a = {7, 9, 3, 2, 1};
+    vector<int> a = {2, 3, 2, 1};
     cout << "peak : " << pivotRotatedArray(a) << endl;
     return 0;
 }
