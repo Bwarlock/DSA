@@ -1,7 +1,9 @@
-#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
 
-int main() {
-    std::cout << "Hello, World!" << std::endl;
+int main()
+{
+    cout << "Hello, World!" << endl;
     return 0;
 }
-//g++ checking.cpp -o checking.exe
+// g++ file.cpp -o
