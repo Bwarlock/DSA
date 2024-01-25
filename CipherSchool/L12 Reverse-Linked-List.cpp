@@ -46,9 +46,9 @@ Node<T> *reverseLinkedList(Node<T> *list)
 template <class T>
 Node<T> *reverseInGroupLinkedList(Node<T> *head, int group)
 {
-    if (head == NULL)
+    if (head == NULL || head->next == NULL)
     {
-        return NULL;
+        return head;
     }
     Node<T> *prev = NULL;
     Node<T> *curr = head;
