@@ -8,15 +8,21 @@ int searchRotatedArray(vector<int> a, int x)
     int mid;
     while (low <= high)
     {
+        cout << low << high << mid << endl;
         mid = (low + high) / 2;
         if (a[mid] == x)
         {
             return mid;
         }
-        if (a[mid] == a[low] && a[mid] == a[high])
+
+        if (a[mid] == a[low])
         {
-            low++;
-            high--;
+            low = mid + 1;
+            continue;
+        }
+        if (a[mid] == a[high])
+        {
+            high = mid - 1;
             continue;
         }
 
@@ -24,24 +30,24 @@ int searchRotatedArray(vector<int> a, int x)
         // low = mid + 1 or high = mid - 1 was giving problems
         if (a[mid] <= a[high])
         {
-            if (a[mid] < x && x < a[high])
+            if (a[mid] < x && x <= a[high])
             {
-                low = mid;
+                low = mid + 1;
             }
             else
             {
-                high = mid;
+                high = mid - 1;
             }
         }
         else
         {
-            if (a[low] < x && x < a[mid])
+            if (a[low] <= x && x < a[mid])
             {
-                high = mid;
+                high = mid - 1;
             }
             else
             {
-                low = mid;
+                low = mid + 1;
             }
         }
     }
@@ -50,8 +56,8 @@ int searchRotatedArray(vector<int> a, int x)
 
 int main()
 {
-    vector<int> a = {7, 8, 9, 11, 1, 2, 3};
-    cout << searchRotatedArray(a, 2) << endl;
+    vector<int> a = {1, 2, 3};
+    cout << searchRotatedArray(a, 3) << endl;
     return 0;
 }
 // g++ file.cpp -o1
