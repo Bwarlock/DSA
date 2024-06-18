@@ -42,6 +42,7 @@ vector<int> inorder(TreeNode *root)
 // Iteration ::::
 vector<int> preorderIterative(TreeNode *root)
 {
+    // 1 2 4 5 3 7
     if (root == NULL)
     {
         return {};
@@ -74,6 +75,7 @@ vector<int> preorderIterative(TreeNode *root)
 
 vector<int> inorderIterative(TreeNode *root)
 {
+    // 4 2 5 1 3 7
     if (root == NULL)
     {
         return {};
@@ -108,9 +110,9 @@ vector<int> inorderIterative(TreeNode *root)
 
 vector<int> postOrderIterative(TreeNode *root)
 {
-
-    // Whatever Abomination This is LOL
-    // OK sO The best 1 stack code isnt looking any better than mine So whatever
+    // 4 5 2 7 3 1
+    //  Whatever Abomination This is LOL
+    //  OK sO The best 1 stack code isnt looking any better than mine So whatever
     if (root == NULL)
     {
         return {};
