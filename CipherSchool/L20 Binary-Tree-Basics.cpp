@@ -260,7 +260,7 @@ int main()
     t1->left->right = new TreeNode(5);
 
     t1->right->right = new TreeNode(7);
-    for (int i : postOrderIterative(t1))
+    for (int i : preorderIterative(t1))
     {
         cout << i << " ";
     }
