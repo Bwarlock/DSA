@@ -7,9 +7,10 @@ public:
     int val;
     TreeNode *left;
     TreeNode *right;
-    TreeNode() : val(0), left(nullptr), right(nullptr) {}
-    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
-    TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+    TreeNode *random;
+    TreeNode() : val(0), random(nullptr), left(nullptr), right(nullptr) {}
+    TreeNode(int x) : val(x), random(nullptr), left(nullptr), right(nullptr) {}
+    TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), random(nullptr), left(left), right(right) {}
 };
 
 void maxPath(TreeNode *root, int sum, int &maxSum)
@@ -170,11 +171,268 @@ vector<vector<int>> rootToLeafPath(TreeNode *root)
     return paths;
 }
 
-vector<int> ancestorOfNode(TreeNode *root) {}
-TreeNode *LCA_Of_BT(TreeNode *root) {}
-void doubly_LinkList_From_Preorder(TreeNode *root) {}
-void doubly_LinkList_From_Inorder(TreeNode *root) {}
-void populateRandomPointer(TreeNode *root) {}
+bool ancestorOfNode(TreeNode *root, TreeNode *node, vector<int> &ancestors)
+{
+    if (root == NULL)
+    {
+        return false;
+    }
+    if (root == node)
+    {
+        return true;
+    }
+    ancestors.push_back(root->val);
+    if (ancestorOfNode(root->left, node, ancestors) ||
+        ancestorOfNode(root->right, node, ancestors))
+    {
+        return true;
+    }
+    ancestors.pop_back();
+    return false;
+}
+
+vector<int> ancestorOfNode(TreeNode *root, TreeNode *node)
+{
+    if (root == NULL)
+    {
+        return {};
+    }
+    vector<int> ancestors;
+    ancestorOfNode(root, node, ancestors);
+    return ancestors;
+}
+
+bool LCA_Of_BT(TreeNode *root, TreeNode *node1, TreeNode *node2, TreeNode *&common)
+{
+    if (root == NULL)
+    {
+        return false;
+    }
+    if (root == node1 || root == node2)
+    {
+        return true;
+    }
+    bool left = LCA_Of_BT(root->left, node1, node2, common);
+    bool right = LCA_Of_BT(root->right, node1, node2, common);
+    if (left && right)
+    {
+        common = root;
+    }
+    if (left || right)
+    {
+        return true;
+    }
+    return false;
+}
+
+TreeNode *LCA_Of_BT(TreeNode *root, TreeNode *node1, TreeNode *node2)
+{
+    if (root == NULL)
+    {
+        return NULL;
+    }
+    TreeNode *common;
+    LCA_Of_BT(root, node1, node2, common);
+    return common;
+}
+
+struct ListNode
+{
+    int val;
+    ListNode *next;
+    ListNode *prev;
+    ListNode() : val(0), prev(nullptr), next(nullptr) {}
+    ListNode(int x) : val(x), prev(nullptr), next(nullptr) {}
+    ListNode(int x, ListNode *prev, ListNode *next) : val(x), prev(prev), next(next) {}
+};
+
+ListNode *doubly_LinkList_From_Preorder(TreeNode *root)
+{
+    if (root == NULL)
+    {
+        return {};
+    }
+    // vector<int> result = {};
+    stack<TreeNode *> stk;
+    TreeNode *temp = root;
+    ListNode *start = NULL;
+    ListNode *prev = NULL;
+    ListNode *curr = NULL;
+    while (true)
+    {
+
+        while (temp != NULL)
+        {
+            stk.push(temp);
+            // D
+            // result.push_back(temp->val);
+            if (curr != nullptr)
+            {
+                prev = curr;
+                curr = new ListNode(temp->val);
+                curr->prev = prev;
+                prev->next = curr;
+            }
+            else
+            {
+                curr = new ListNode(temp->val);
+                start = curr;
+            }
+            // L
+            temp = temp->left;
+        }
+
+        if (stk.empty())
+        {
+            break;
+        }
+        // R
+        temp = stk.top()->right;
+        stk.pop();
+    }
+    return start;
+}
+ListNode *doubly_LinkList_From_Inorder(TreeNode *root)
+{
+    if (root == NULL)
+    {
+        return {};
+    }
+    // vector<int> result = {};
+    stack<TreeNode *> stk;
+    TreeNode *temp = root;
+    ListNode *start = NULL;
+    ListNode *prev = NULL;
+    ListNode *curr = NULL;
+    while (true)
+    {
+        while (temp != NULL)
+        {
+            stk.push(temp);
+            // L
+            temp = temp->left;
+        }
+
+        if (stk.empty())
+        {
+            break;
+        }
+
+        // D
+        // result.push_back(stk.top()->val);
+        if (curr != nullptr)
+        {
+            prev = curr;
+            curr = new ListNode(stk.top()->val);
+            curr->prev = prev;
+            prev->next = curr;
+        }
+        else
+        {
+            curr = new ListNode(stk.top()->val);
+            start = curr;
+        }
+        // R
+        temp = stk.top()->right;
+        stk.pop();
+    }
+    return start;
+}
+
+void populateRandomPointer(TreeNode *root)
+{
+    if (root == NULL)
+    {
+        return;
+    }
+    vector<int> result;
+    queue<TreeNode *> Q;
+    TreeNode *temp = root;
+    TreeNode *prev = NULL;
+    TreeNode *curr = NULL;
+    Q.push(temp);
+    Q.push(NULL);
+    while (!Q.empty())
+    {
+        if (Q.front() == NULL)
+        {
+            // Current Level Traversed
+            Q.pop();
+            if (!Q.empty())
+            {
+                Q.push(NULL);
+            }
+            curr = NULL;
+        }
+        else
+        {
+            while (Q.front() != NULL)
+            {
+                temp = Q.front();
+                Q.pop();
+                if (temp->left != NULL)
+                {
+                    Q.push(temp->left);
+                }
+                if (temp->right != NULL)
+                {
+                    Q.push(temp->right);
+                }
+                if (curr != nullptr)
+                {
+                    prev = curr;
+                    curr = temp;
+                    prev->random = curr;
+                }
+                else
+                {
+                    curr = temp;
+                }
+            }
+        }
+    }
+    return;
+}
+
+vector<TreeNode *> iterate(TreeNode *root)
+{
+    if (root == NULL)
+    {
+        return {};
+    }
+    vector<TreeNode *> result;
+    queue<TreeNode *> Q;
+    Q.push(root);
+    Q.push(NULL);
+    while (!Q.empty())
+    {
+        if (Q.front() == NULL)
+        {
+            // Current Level Traversed
+            Q.pop();
+            if (!Q.empty())
+            {
+                Q.push(NULL);
+            }
+        }
+        else
+        {
+            root = Q.front();
+            Q.pop();
+            result.push_back(root);
+            if (root->left != NULL)
+            {
+                Q.push(root->left);
+            }
+            if (root->right != NULL)
+            {
+                Q.push(root->right);
+            }
+        }
+    }
+    return result;
+}
+
 int main()
 {
     //          1
@@ -185,20 +443,35 @@ int main()
     vector<int> preorder = {1, 2, 4, 5, 3, 7};
     vector<int> postorder = {4, 5, 2, 7, 3, 1};
     TreeNode *t1 = buildTreePostOrder(inorde, postorder, 0, 5, curr);
-    cout << t1->right->right->val << endl;
     for (int i : inorder(t1))
     {
         cout << i << " ";
     }
     cout << endl;
-    for (vector<int> k : rootToLeafPath(t1))
+    for (int i : ancestorOfNode(t1, t1->right->right))
     {
-        for (int i : k)
+        cout << i << " ";
+    }
+    cout << endl;
+    // cout << LCA_Of_BT(t1, t1->left->left, t1->right->right)->val;
+    // cout << endl;
+
+    ListNode *head = doubly_LinkList_From_Inorder(t1);
+    while (head != NULL)
+    {
+        cout << head->val << "hi ";
+        head = head->next;
+    }
+    cout << endl;
+    populateRandomPointer(t1);
+
+    for (TreeNode *i : iterate(t1))
+    {
+        if (i->random != nullptr)
         {
-            cout << i << " ";
+            cout << i->val << " " << i->random->val << endl;
         }
     }
-
     // TreeNode *t1;
     // t1 = new TreeNode(1);
     // t1->left = new TreeNode(2);
