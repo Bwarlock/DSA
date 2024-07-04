@@ -261,6 +261,164 @@ TreeNode *leastCommonAncestorOfBST(TreeNode *root, const int &left, const int &r
 // Return all unique binary search trees
 
 // vector<TreeNode *> uniqueBstArray(int n) {}
+vector<int> cousinOfNodes(TreeNode *root, TreeNode *node)
+{
+    if (root == NULL)
+    {
+        return {};
+    }
+    TreeNode *temp;
+    bool check = false;
+    vector<int> result;
+    queue<TreeNode *> Q;
+    Q.push(root);
+    Q.push(NULL);
+    while (!Q.empty())
+    {
+        if (check)
+        {
+            while (Q.front() != NULL)
+            {
+                temp = Q.front();
+                Q.pop();
+                result.push_back(temp->val);
+            }
+            Q.pop();
+            break;
+        }
+        while (Q.front() != NULL)
+        {
+            temp = Q.front();
+            Q.pop();
+            if (temp->left == node || temp->right == node)
+            {
+                check = true;
+            }
+            else
+            {
+                if (temp->left != NULL)
+                {
+                    Q.push(temp->left);
+                }
+                if (temp->right != NULL)
+                {
+                    Q.push(temp->right);
+                }
+            }
+        }
+        Q.pop();
+        if (!Q.empty())
+        {
+            Q.push(NULL);
+        }
+    }
+    return result;
+}
+
+int height(TreeNode *root)
+{
+    if (root == NULL)
+    {
+        return 0;
+    }
+    else
+    {
+        return 1 + max(height(root->left), height(root->right));
+    }
+}
+
+void nodesAtKdistance(vector<int> &level, vector<int> &result, int index, const int &k, int count, bool left, bool right, bool parent)
+{
+    if (index < 0 || index >= level.size())
+    {
+        cout << index << endl;
+        return;
+    }
+    if (count == k)
+    {
+        cout << left << right << parent << index << endl;
+        if (level[index] != -1)
+        {
+            result.push_back(level[index]);
+        }
+        return;
+    }
+    if (!left)
+    {
+        cout << index << "left" << endl;
+        nodesAtKdistance(level, result, 2 * index + 1, k, count + 1, false, false, true);
+    }
+    if (!right)
+    {
+        cout << index << "right" << endl;
+        nodesAtKdistance(level, result, 2 * index + 2, k, count + 1, false, false, true);
+    }
+    if (!parent)
+    {
+        double parentIndex = (index - 1) / (double)2;
+        cout << index << !(index & 1) << parentIndex << endl;
+        if (parentIndex >= 0)
+        {
+            nodesAtKdistance(level, result, parentIndex, k, count + 1, index & 1, !(index & 1), false);
+        }
+    }
+}
+
+vector<int> nodesAtKdistance(TreeNode *root, TreeNode *node, const int k)
+{
+    if (root == NULL)
+    {
+        return {};
+    }
+    int ht = height(root);
+    int size = pow(2, ht) - 1;
+    vector<int> level(size, -1);
+    vector<int> result;
+    int index = -1;
+
+    pair<TreeNode *, int> temp;
+    queue<pair<TreeNode *, int>> Q;
+    Q.push({root, 0});
+    Q.push({NULL, 0});
+    while (!Q.empty())
+    {
+        while (Q.front().first != NULL)
+        {
+            temp = Q.front();
+            Q.pop();
+            level[temp.second] = temp.first->val;
+            if (temp.first == node)
+            {
+                index = temp.second;
+            }
+            if (temp.first->left != NULL)
+            {
+                Q.push({temp.first->left, 2 * temp.second + 1});
+            }
+            if (temp.first->right != NULL)
+            {
+                Q.push({temp.first->right, 2 * temp.second + 2});
+            }
+        }
+        Q.pop();
+        if (!Q.empty())
+        {
+            Q.push({NULL, 0});
+        }
+    }
+    for (int i : level)
+    {
+        cout << i << " ";
+    }
+    cout << endl;
+    cout << index << "hi" << endl;
+    nodesAtKdistance(level, result, index, k, 0, false, false, false);
+    return result;
+}
+
+// DP
+// optimalBinarySearchTree(vector<int>& nodes,vector<int>& cost){}
+
 int main()
 {
     //          4
@@ -277,14 +435,14 @@ int main()
     pair<int, int> p = {2, 8};
     vector<int> result = preorderIterative(t1);
     vector<int> sortedArr = {1, 2, 3, 4, 5, 6};
-    for (int i : levelOrderIterative(bstFromSortedArray(sortedArr)))
+    for (int i : nodesAtKdistance(t1, t1->left, 3))
     {
         cout << i << " ";
     }
     cout << endl;
-    cout << checkIfBst(t1) << endl;
-    cout << balancedBinaryTree(t1) << endl;
-    cout << leastCommonAncestorOfBST(t1, 0, 3)->val << endl;
+    // cout << checkIfBst(t1) << endl;
+    // cout << balancedBinaryTree(t1) << endl;
+    // cout << leastCommonAncestorOfBST(t1, 0, 3)->val << endl;
     return 0;
 }
 // g++ file.cpp -o
