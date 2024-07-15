@@ -163,6 +163,37 @@ int longestIncreasingSubsequenceSum(const vector<int> &nums)
     return dp[length - 1];
 }
 
+int longestIncreasingPathInMatrix(const vector<vector<int>> &arr, int row, int col, vector<vector<int>> &dp, int prev)
+{
+    if (row < 0 || arr.size() <= row || col < 0 || arr[0].size() <= col || arr[row][col] <= prev)
+    {
+        return 0;
+    }
+    if (dp[row][col] == 0)
+    {
+        int left = longestIncreasingPathInMatrix(arr, row, col - 1, dp, arr[row][col]);
+        int right = longestIncreasingPathInMatrix(arr, row, col + 1, dp, arr[row][col]);
+        int top = longestIncreasingPathInMatrix(arr, row - 1, col, dp, arr[row][col]);
+        int bottom = longestIncreasingPathInMatrix(arr, row + 1, col, dp, arr[row][col]);
+        dp[row][col] = 1 + max(max(left, right), max(top, bottom));
+    }
+    return dp[row][col];
+}
+
+int longestIncreasingPathInMatrix(const vector<vector<int>> &arr)
+{
+    int result = 0;
+    vector<vector<int>> dp(arr.size(), vector<int>(arr[0].size(), 0));
+    for (int i = 0; i < arr.size(); i++)
+    {
+        for (int k = 0; k < arr[0].size(); k++)
+        {
+            result = max(result, longestIncreasingPathInMatrix(arr, i, k, dp, 0));
+        }
+    }
+    return result;
+}
+
 // void allPossibleCoinChange(vector<int> &coins, const int &sum, vector<unordered_map<int, int>> &result, unordered_map<int, int> &tempMap,int tempSum)
 // {
 //     if(tempSum > sum){
@@ -191,6 +222,6 @@ vector<unordered_map<int, int>> allPossibleCoinChange(vector<int> &coins, const 
 
 int main()
 {
-    cout << longestIncreasingSubsequenceSum({2, 0, 1, 4});
+    cout << longestIncreasingPathInMatrix({{1, 2, 3}, {4, 5, 6}, {7, 8, 9}});
     return 0;
 }
