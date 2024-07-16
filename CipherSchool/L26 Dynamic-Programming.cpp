@@ -194,6 +194,91 @@ int longestIncreasingPathInMatrix(const vector<vector<int>> &arr)
     return result;
 }
 
+int longestPalindromeSubstring(const string &s)
+{
+    int len = s.length();
+    // Another question of total possibles
+    int totalPossible = 0;
+    if (len < 3)
+    {
+        if (s[0] == s[len - 1])
+        {
+            return len;
+        }
+        else
+        {
+            return 1;
+        }
+    }
+    string result = "";
+    int maxLen = 0;
+    vector<vector<int>> dp(len, vector<int>(len, 0));
+    for (int i = 0; i < len; i++)
+    {
+        dp[i][i] = 1;
+    }
+    totalPossible += len;
+    maxLen = 1;
+    result = s.substr(len - 1, 1);
+
+    for (int window = 1; window < len; window++)
+    {
+        for (int i = 0; i + window < len; i++)
+        {
+            if (window == 1)
+            {
+                if (s[i] == s[i + window])
+                {
+                    dp[i][i + window] = 2;
+                    maxLen = max(maxLen, 2);
+                    result = s.substr(i, 2);
+                    totalPossible++;
+                }
+                else
+                {
+                    dp[i][i + window] = 0;
+                }
+                continue;
+            }
+            if (s[i] == s[i + window] && dp[i + 1][i + window - 1] > 0)
+            {
+                dp[i][i + window] = 2 + dp[i + 1][i + window - 1];
+                maxLen = max(maxLen, dp[i][i + window]);
+                result = s.substr(i, window + 1);
+                totalPossible++;
+            }
+            // else
+            // {
+            //     dp[i][i + k] = max(dp[i][i + k - 1], dp[i + 1][i + k]);
+            // }
+            else
+            {
+                dp[i][i + window] = 0;
+            }
+        }
+    }
+
+    cout << "  ";
+    for (char i : s)
+    {
+        cout << i << " ";
+    }
+    cout << endl;
+
+    for (int i = 0; i < dp.size(); i++)
+    {
+        cout << s[i] << " ";
+        for (int k : dp[i])
+        {
+            cout << k << " ";
+        }
+        cout << endl;
+    }
+    cout << result << endl;
+
+    return maxLen;
+}
+
 // void allPossibleCoinChange(vector<int> &coins, const int &sum, vector<unordered_map<int, int>> &result, unordered_map<int, int> &tempMap,int tempSum)
 // {
 //     if(tempSum > sum){
@@ -222,6 +307,8 @@ vector<unordered_map<int, int>> allPossibleCoinChange(vector<int> &coins, const 
 
 int main()
 {
-    cout << longestIncreasingPathInMatrix({{1, 2, 3}, {4, 5, 6}, {7, 8, 9}});
+    // cout << longestIncreasingPathInMatrix({{1, 2, 3}, {4, 5, 6}, {7, 8, 9}});
+    cout << longestPalindromeSubstring("ababab") << endl;
+
     return 0;
 }
